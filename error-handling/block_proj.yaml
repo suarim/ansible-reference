@@ -1,0 +1,35 @@
+---
+- name: Web server installation with rollback
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: Attempt to install and start the web server
+      block:
+        - name: Install Apache web server
+          ansible.builtin.yum:
+            name: httpd
+            state: present
+
+        - name: Start and enable Apache service
+          ansible.builtin.systemd:
+            name: httpd
+            state: started
+            enabled: yes
+
+      rescue:
+        - name: Rollback - Remove Apache if installation fails
+          ansible.builtin.yum:
+            name: httpd
+            state: absent
+
+        - name: Rollback - Stop and disable Apache service
+          ansible.builtin.systemd:
+            name: httpd
+            state: stopped
+            enabled: no
+
+      always:
+        - name: Always print a message indicating the task result
+          ansible.builtin.debug:
+            msg: "Apache installation task has been completed or rolled back."
