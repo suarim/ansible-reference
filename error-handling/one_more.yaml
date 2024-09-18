@@ -1,0 +1,18 @@
+---
+- name: Error handling with block and rescue
+  hosts: localhost
+  tasks:
+    - name: Try to copy a file
+      block:
+        - name: Copy the file
+          ansible.builtin.copy:
+            src: index.html
+            dest: /tmp/hosts
+      rescue:
+        - name: File not found, handle the error
+          ansible.builtin.debug:
+            msg: "The file 'index.html' was not found, using fallback."
+        - name: Create a placeholder file instead
+          ansible.builtin.copy:
+            content: "This is a placeholder file."
+            dest: /tmp/hosts
