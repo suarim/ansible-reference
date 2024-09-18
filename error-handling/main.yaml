@@ -1,0 +1,19 @@
+---
+name: error-handling
+hosts: all
+become: yes
+tasks:
+  - name: copy file
+    ansible.builtin.copy:
+      src: index.html
+      dest: /tmp/hosts
+    register: result
+    ignore_errors: yes
+  - name: copy again
+    ansible.builtin.copy:
+      src: index.html
+      dest: /tmp/hosts
+    failed_when: 
+      - '"Could not find or access " in result.msg'
+      - result.failed == true
+    any_errors_fatal: true

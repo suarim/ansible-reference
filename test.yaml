@@ -1,0 +1,48 @@
+---
+name: test
+hosts: all
+become: yes
+vars:
+  pkg: "nginx"
+  flag: true
+  x: 10
+tasks:
+  - name: show date
+    command: date
+  - name: install nginx
+    ansible.builtin.apt:
+      name: "{{ pkg }}"
+      state: present
+  - name: start nginx
+    service:
+      name: nginx
+      state: started
+      enabled: yes
+    when:
+      - flag==true
+      - x>5
+  - name: uptime
+    command: uptime
+  
+  - name: loop around
+    debug:
+      msg: "{{item}}"
+    loop:
+      - 1
+      - 2 
+      - 3
+      - 4
+
+  - name: anotherloop around
+    debug:
+      msg: "{{item.x}} and {{item.y}}"
+    loop:
+      - {x: 1, y: 2}
+      - {x: 3, y: 4}
+    notify:
+      - restart nginx
+handlers:
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted

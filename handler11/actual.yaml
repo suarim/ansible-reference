@@ -1,0 +1,29 @@
+---
+name: Install Nginx on all hosts
+become: yes
+hosts: all
+tasks:
+  - name: Install Nginx
+    apt:
+      name: nginx
+      state: present
+  - name: copy
+    copy:
+      src: index.html
+      dest: /var/www/html
+  - name: start nginx
+    service:
+      name: nginx
+      state: started
+      enabled: yes
+  - name: updated
+    ansible.builtin.copy:
+      src: updated.html
+      dest: /var/www/html
+    notify:
+      - restart nginx
+handler:
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted

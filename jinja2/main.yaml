@@ -1,0 +1,12 @@
+---
+name: jinja
+hosts: all
+become: yes
+tasks:
+  - name: temp
+    ansible.builtin.template:
+      src: config2.j2
+      dest: /home/ansible/templates/jinja2.txt
+    vars:
+      server_name: suarim
+      port: 80

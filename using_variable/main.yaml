@@ -1,0 +1,60 @@
+---
+name: using_var
+become: true
+hosts: all
+vars:
+  name: suarim
+  x: True
+  # list of fruits
+  fruits:
+    - apple
+    - banana
+    - orange
+  dictionary:
+    key1: value1
+    key2: value2
+    key3: value3
+
+tasks:
+  - name: Display name
+    debug:
+      var: name
+
+  - name: Conditional
+    debug:
+      msg: "x is True"
+    when: x
+
+  - name: Display first fruit
+    debug:
+      var: fruits[0]
+
+  - name: Loop through fruits
+    debug:
+      msg: "{{ item }}"
+    loop: "{{ fruits }}"
+
+  - name: Loop through dictionary
+    debug:
+      msg: "{{ item.key }}: {{ item.value }}"
+    loop: "{{ dictionary | dict2items }}"
+
+  - name: Display whole dictionary
+    debug:
+      var: dictionary
+
+  - name: Display specific key in dictionary
+    debug:
+      var: dictionary.key2
+
+  - name: Register fruits list
+    shell: echo "{{ fruits }}"
+    register: result
+
+  - name: Display registered result
+    debug:
+      var: result.stdout
+
+  - name: jinja2
+    debug:
+      var: dictionary.keys() | list | map('upper') | list

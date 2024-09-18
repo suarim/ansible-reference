@@ -1,0 +1,25 @@
+---
+name: conditional
+hosts: all
+become: yes
+vars:
+  flag: true
+tasks:
+  - name: install apache2
+    apt:
+      name: apache2
+      state: present
+    when: flag
+  - name: install nginx
+    apt:
+      name: nginx
+      state: present
+    when:
+      - ansible_facts['os_family'] == 'Debian'
+      - ansible_facts['distribution_major_version'] == '16'
+  - name : cat and resgister
+    command: cat /etc/os-release
+    register: os_release
+  - name: debug os_release
+    debug:
+      var: os_release

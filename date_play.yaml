@@ -1,0 +1,21 @@
+---
+name: date_play
+hosts: all
+become: yes
+tasks:
+  - name: Show date
+    command: date
+  - name: install nginx
+    ansible.builtin.apt:
+      name: nginx
+      state: present
+  - name: start nginx
+    ansible.builtin.service:
+      name: nginx
+      state: started
+  - name: enable nginx
+    ansible.builtin.service:
+      name: nginx
+      enabled: yes
+  - name: uptime
+    command: uptime

@@ -1,0 +1,36 @@
+---
+name: indrastructure_as_code
+hosts: localhost
+become: yes
+gather_facts: no
+vars:
+  region: us-west-2
+  image: ami-0c55b159cbfafe1f0
+  instance_type: t2.micro
+  key_name: mykey
+  existing_security_group: "sg-12345678"
+  instance_count: 1
+  s3_bucket_name: my-s3-bucket-name  # Add your desired bucket name here
+tasks:
+  - name: launch ec2 instance
+    ec2:
+      region: "{{ region }}"
+      image: "{{ image }}"
+      instance_type: "{{ instance_type }}"
+      key_name: "{{ key_name }}"
+      count: "{{ instance_count }}"
+      group_id: "{{ existing_security_group }}"
+      wait: yes
+      instance_tags:
+        Name: my-instance
+    register: ec2
+
+  - name: display info of ec2 instance
+    debug:
+      var: ec2.instances[0].public_ip
+
+  - name: Create S3 bucket
+    amazon.aws.s3_bucket:
+      name: "{{ s3_bucket_name }}"
+      region: "{{ region }}"
+      state: present
